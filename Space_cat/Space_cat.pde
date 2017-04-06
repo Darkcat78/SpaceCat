@@ -6,11 +6,13 @@ import ddf.minim.*;
  
  
  Minim minim;
+AudioPlayer coco;
 AudioPlayer bag;
 AudioPlayer geo;
 AudioSample squish;
 AudioSample explo1;
 AudioSample exploboss;
+int cococpt=-1; // choix du thème
 int bosslife = 100;//vie du boss
 int  yb;//coordonées du boss
 int cptboss=0; //compteur de boss
@@ -50,18 +52,26 @@ float [] taby= new float[200] ;
 float []tabxb= new float[100];
 float [] tabyb= new float[100] ;
 
-PImage background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss;
+PImage island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option; // déclaration des images
 
-void menu(){
-  if(menu==0){
-     
-    image(menui,0,0,350,550);
-    if (key == 'o'){
+void option(){
+   if (key == 'o'){
       if (keyPressed == true){
-        image(bombe,0,0,350,350);
+        image(option,0,0,350,550);
+        taby[i]=taby[i]-t;
+        tabyb[i]=tabyb[i]-t;
       }
     }
-  
+}
+void menu(){
+  if(menu==0){
+     bag.play();
+    image(menui,0,0,width,height);
+    
+   
+    option();
+   
+    
  
  // image(trump,100,300,150,150);
    }
@@ -99,7 +109,7 @@ void boss(){
  image(boss,xb,yb,100,100);
  fill(0,255,255);
  rect(xb-50,yb-70,bosslife,yb-90);
- if(dist(xm,ym,xb,yb)<50){
+ if(dist(xm,ym,xb,yb+20)<100){
    bosslife=bosslife-25;
    ym=0;
    exploboss.trigger();
@@ -113,17 +123,55 @@ void boss(){
    }
  
 }
-
+void coconut(){
+  if(key=='w'){
+    if(keyPressed == true){
+     
+      cococpt=2;
+    }
+  }
+   
+    if(key=='x'){
+    if(keyPressed == true){
+     cococpt= -2;
+    }
+    }
+   
+  
+}
 
 
 void jeu(){
+   if(cococpt>= 1){
+    background(island);
+    
+      fill(255,255,255);
+  line(25,500,320,500);
+  image(cat,x-25,y-25,50,50);
+      bag.close();
+     geo.close();
+     coco.play();
+    }
+ if(cococpt<=-1){
+    background(background);
+    
+      fill(255,255,255);
+  line(25,500,320,500);
+  image(cat,x-25,y-25,50,50);
+ 
+    }
+ 
+  
+
+ 
+   coconut();
   level();
   if (cptlvl % 2 == 0) {
     cptboss=1;
    boss();
  }
 for( int i=0; i < tabx.length ; i=i+1){
-  
+  option();
   if(cptboss==1){
    taby[i]=taby[i]-t; 
   }
@@ -201,6 +249,7 @@ if(cptv>=5){
    }
  
      for( int i=0; i < tabxb.length ; i=i+1){
+       option();
   if(vie<=0){
        tabyb[i]=600;
        image(gameover,15,105,320,240);
@@ -304,7 +353,7 @@ if(sc==1){
       textSize(40);
     fill( 255, 255, 255);
   text(score, 160, 90);
- 
+ option();
   
   
 }
@@ -440,6 +489,7 @@ if(vie>=5){
 }
 
 void setup (){
+  cococpt = -1;
    xb=random(100,250);
    bosslife=100;
   yb=100;
@@ -461,6 +511,8 @@ void setup (){
   menui = loadImage("menu.jpg");
   boss = loadImage ("boss.png");
   asteroide =loadImage("asteroide.png");
+  island = loadImage("beach.png");
+  option = loadImage("option.jpg");
   
  minim= new Minim(this);
  bag = minim.loadFile("Bag Raiders - Shooting Stars.mp3");
@@ -468,6 +520,7 @@ void setup (){
   explo1 = minim.loadSample("explo1.wav");
   geo= minim.loadFile("GeometryDash-Level1.mp3");
   exploboss = minim.loadSample("chat.mp3");
+  coco = minim.loadFile("cocoSong.mp3");
   fill(255,255,255);
   line(25,500,320,25);
 
@@ -485,6 +538,7 @@ void setup (){
  }
 }
 
+
  
  
   
@@ -492,17 +546,13 @@ void setup (){
 
 
 void draw(){
-  background(background);
+  
+  
   frameRate(300);
  // background(r,v,b);
   
 
- fill(255,255,255);
-  line(25,500,320,500);
-  bag.play();
-// fill(252,0,0);
-  //ellipse(x,y,50,50);
-   image(cat,x-25,y-25,50,50);
+
    
    
    
