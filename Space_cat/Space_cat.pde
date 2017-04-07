@@ -1,5 +1,4 @@
 
-
 import ddf.minim.*;
 
  
@@ -52,8 +51,22 @@ float [] taby= new float[200] ;
 float []tabxb= new float[100];
 float [] tabyb= new float[100] ;
 
-PImage island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option; // déclaration des images
+PImage island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,monde; // déclaration des images
 
+void monde()
+{
+if (key == 'm'){
+     
+        image(monde,0,0,350,550);
+        taby[i]=taby[i]-t;
+        tabyb[i]=tabyb[i]-t;
+       
+    
+    if (key == 's'){
+    menu=0;
+    }
+}
+}
 void option(){
    if (key == 'o'){
       if (keyPressed == true){
@@ -70,7 +83,7 @@ void menu(){
     
    
     option();
-   
+   monde();
     
  
  // image(trump,100,300,150,150);
@@ -354,7 +367,7 @@ if(sc==1){
     fill( 255, 255, 255);
   text(score, 160, 90);
  option();
-  
+  monde();
   
 }
 
@@ -513,6 +526,7 @@ void setup (){
   asteroide =loadImage("asteroide.png");
   island = loadImage("beach.png");
   option = loadImage("option.jpg");
+  monde = loadImage("monde.png");
   
  minim= new Minim(this);
  bag = minim.loadFile("Bag Raiders - Shooting Stars.mp3");
@@ -549,14 +563,19 @@ void draw(){
   
   
   frameRate(300);
- // background(r,v,b);
   
-
-
-   
-   
-   
-   if (keyCode == ENTER) {
+   if (key == '1') {
+   if(keyPressed ==true){
+     menu=1;
+   }
+ }
+ if (key == '2') {
+   if(keyPressed ==true){
+     menu=1;
+     cococpt=2;
+   }
+ }
+ if (key == '3') {
    if(keyPressed ==true){
      menu=1;
    }
@@ -569,7 +588,6 @@ void draw(){
    
    
 }
-
  
 
  
