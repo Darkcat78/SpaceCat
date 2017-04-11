@@ -8,10 +8,13 @@ import ddf.minim.*;
 AudioPlayer coco;
 AudioPlayer bag;
 AudioPlayer geo;
+AudioPlayer snoop;
 AudioSample squish;
 AudioSample explo1;
 AudioSample exploboss;
-int cococpt=-1; // choix du thème
+int select=0;
+int worldselect=0;
+int world=0; // choix du monde
 int bosslife = 100;//vie du boss
 int  yb;//coordonées du boss
 int cptboss=0; //compteur de boss
@@ -51,29 +54,87 @@ float [] taby= new float[200] ;
 float []tabxb= new float[100];
 float [] tabyb= new float[100] ;
 
-PImage island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,monde; // déclaration des images
+PImage thugcat, palmcat, city, island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,mondeselect; // déclaration des images
 
-void monde()
-{
-if (key == 'm'){
-     
-        image(monde,0,0,350,550);
+void monde(){
+  if(menu==0){
+  if (key == ENTER){
+  select=1;
+ }  
+  if(select==1){
+    image(mondeselect,0,0,350,550);
         taby[i]=taby[i]-t;
         tabyb[i]=tabyb[i]-t;
-       
+  
+
+   
+   
     
-    if (key == 's'){
-    menu=0;
+  if(key=='1'){
+    worldselect=1;
+    
+  }
+  if(key =='2'){
+    worldselect=2;
+  }
+  if(key=='3'){
+    worldselect=3;
+  }
+ if(worldselect==1){
+   
+    image(cat,26,140,80,80);
+    if (key == ENTER ) {
+   if(keyPressed==true){
+    select=2;
+     menu=1;
+     world=1;
+   }
     }
+ }
+  if(worldselect==2){
+  
+    image(palmcat,145,140,80,80);
+     if (key == ENTER ) {
+   if(keyPressed==true){
+     select=2;
+     menu=1;
+     world=2;
+   }
+   else{
+     select=2;
+     menu=1;
+     world=2;
+     }
+     }
+ }
+  if(worldselect==3){
+   
+    image(thugcat,245,140,80,80);
+    if (key == ENTER) {
+     if(keyPressed==true){
+     select=2;
+     menu=1;
+     world=3;
+   }
+    }
+ }
+
+  
+ 
+  }
+  }
 }
-}
+
+
+
+
 void option(){
    if (key == 'o'){
-      if (keyPressed == true){
+     
         image(option,0,0,350,550);
         taby[i]=taby[i]-t;
         tabyb[i]=tabyb[i]-t;
-      }
+      
     }
 }
 void menu(){
@@ -84,7 +145,7 @@ void menu(){
    
     option();
    monde();
-    
+   
  
  // image(trump,100,300,150,150);
    }
@@ -136,49 +197,55 @@ void boss(){
    }
  
 }
-void coconut(){
-  if(key=='w'){
-    if(keyPressed == true){
-     
-      cococpt=2;
-    }
-  }
-   
-    if(key=='x'){
-    if(keyPressed == true){
-     cococpt= -2;
-    }
-    }
-   
+
   
-}
-
-
 void jeu(){
-   if(cococpt>= 1){
+  
+    if (key == 's'){
+      if(keyPressed==true){
+    menu=0;
+    score=0;
+    select=0;
+    worldselect=0;
+    tabx[i]=random(350);
+   taby[i]=random(-50000,-50);
+   coco.close();
+   bag.play();
+      }
+    }
+    
+  level();
+   if(world == 2){
     background(island);
     
       fill(255,255,255);
   line(25,500,320,500);
-  image(cat,x-25,y-25,50,50);
+  image(palmcat,x-25,y-25,60,60);
+  coco.play();
+  snoop.close();
       bag.close();
-     geo.close();
-     coco.play();
-    }
- if(cococpt<=-1){
+     }
+ if(world==1){
     background(background);
+   fill(255,255,255);
+  line(25,500,320,500);
+  image(cat,x-25,y-25,60,60);
+ 
+    }
+    
+    if(world==3){
+      background(city);
     
       fill(255,255,255);
   line(25,500,320,500);
-  image(cat,x-25,y-25,50,50);
- 
+  image(thugcat,x-25,y-25,60,60);
+  bag.close(); 
+  snoop.play();
     }
  
   
 
  
-   coconut();
-  level();
   if (cptlvl % 2 == 0) {
     cptboss=1;
    boss();
@@ -256,10 +323,7 @@ if(cptv>=5){
   vie=vie+1;
   cptv=0;
 }
-   if(score>=30){
-     bag.close();
-     geo.play();
-   }
+   
  
      for( int i=0; i < tabxb.length ; i=i+1){
        option();
@@ -502,7 +566,7 @@ if(vie>=5){
 }
 
 void setup (){
-  cococpt = -1;
+  world = -1;
    xb=random(100,250);
    bosslife=100;
   yb=100;
@@ -526,7 +590,10 @@ void setup (){
   asteroide =loadImage("asteroide.png");
   island = loadImage("beach.png");
   option = loadImage("option.jpg");
-  monde = loadImage("monde.png");
+  mondeselect = loadImage("monde.png");
+  city = loadImage("city.jpg");
+  thugcat= loadImage("thugcat.png");
+  palmcat= loadImage("palmcat.png");
   
  minim= new Minim(this);
  bag = minim.loadFile("Bag Raiders - Shooting Stars.mp3");
@@ -535,6 +602,7 @@ void setup (){
   geo= minim.loadFile("GeometryDash-Level1.mp3");
   exploboss = minim.loadSample("chat.mp3");
   coco = minim.loadFile("cocoSong.mp3");
+  snoop = minim.loadFile("snoop.mp3");
   fill(255,255,255);
   line(25,500,320,25);
 
@@ -564,22 +632,7 @@ void draw(){
   
   frameRate(300);
   
-   if (key == '1') {
-   if(keyPressed ==true){
-     menu=1;
-   }
- }
- if (key == '2') {
-   if(keyPressed ==true){
-     menu=1;
-     cococpt=2;
-   }
- }
- if (key == '3') {
-   if(keyPressed ==true){
-     menu=1;
-   }
- }
+   
  menu();
  if (menu>=1){
    jeu();
