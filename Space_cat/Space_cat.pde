@@ -8,10 +8,15 @@ import ddf.minim.*;
 AudioPlayer coco;
 AudioPlayer bag;
 AudioPlayer geo;
+AudioPlayer snoop;
 AudioSample squish;
 AudioSample explo1;
 AudioSample exploboss;
-int cococpt=-1; // choix du thème
+float abs=0; //abscisses des astéroides
+int select=0;
+int xv; //abscisse du coeur bonus après le boss
+int worldselect=0;
+int world=0; // choix du monde
 int bosslife = 100;//vie du boss
 int  yb;//coordonées du boss
 int cptboss=0; //compteur de boss
@@ -29,7 +34,7 @@ float x=70;//abcsisse du chat
  int ym=500;//ordonée du missile
  float y=500;//ordonée du chat
  int best=10;
- int p=1; //vitesse de la ligne de triangles
+ float p=1; //vitesse de la ligne de triangles
  float rx=random(350);
  int ry=-10;
  int n=0; // compteur pour la ligne
@@ -40,40 +45,107 @@ float x=70;//abcsisse du chat
  int dx = 1;
  int dy = 1;
  int dz = 1;
- int yl=0;
+ float yl=-40;
  int ylife=15; //ordonée des coeurs
  int r=200;
  float v=1;
  int b=200;
  float []tabx= new float[200];
 float [] taby= new float[200] ;
-
+float [] tabxa= new float[11] ;
 float []tabxb= new float[100];
 float [] tabyb= new float[100] ;
 
-PImage island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,monde; // déclaration des images
+PImage thugcat, palmcat, city, island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,mondeselect; // déclaration des images
 
-void monde()
-{
-if (key == 'm'){
-     
-        image(monde,0,0,350,550);
+void monde(){
+  if(menu==0){
+  if (key == ENTER){
+  select=1;
+ }  
+  if(select==1){
+    image(mondeselect,0,0,350,550);
         taby[i]=taby[i]-t;
         tabyb[i]=tabyb[i]-t;
-       
+  
+
+   
+   
     
-    if (key == 's'){
-    menu=0;
+  if(key=='1'){
+    worldselect=1;
+    
+  }
+  if(key =='2'){
+    worldselect=2;
+  }
+  if(key=='3'){
+    worldselect=3;
+  }
+ if(worldselect==1){
+   
+    image(cat,26,140,80,80);
+    if (key == ENTER ) {
+   if(keyPressed==true){
+    select=2;
+     menu=1;
+     world=1;
+     bag.play();
+      coco.close(); 
+  snoop.close();
+   }
     }
+ }
+  if(worldselect==2){
+  
+    image(palmcat,145,140,80,80);
+     if (key == ENTER ) {
+   if(keyPressed==true){
+     select=2;
+     menu=1;
+     world=2;
+     coco.play();
+      bag.close(); 
+  snoop.close();
+   }
+   else{
+     select=2;
+     menu=1;
+     world=2;
+     }
+     }
+ }
+  if(worldselect==3){
+   
+    image(thugcat,245,140,80,80);
+    if (key == ENTER) {
+     if(keyPressed==true){
+     select=2;
+     menu=1;
+     world=3;
+     snoop.play();
+      coco.close(); 
+  bag.close();
+   }
+    }
+ }
+
+  
+ 
+  }
+  }
 }
-}
+
+
+
+
 void option(){
-   if (key == 'o'){
-      if (keyPressed == true){
+   if (key == 'o' || key=='O'){
+     
         image(option,0,0,350,550);
         taby[i]=taby[i]-t;
         tabyb[i]=tabyb[i]-t;
-      }
+      
     }
 }
 void menu(){
@@ -84,7 +156,7 @@ void menu(){
    
     option();
    monde();
-    
+   
  
  // image(trump,100,300,150,150);
    }
@@ -130,55 +202,70 @@ void boss(){
    }
  }
    else{
-     cptlvl=cptlvl+1;
-     bosslife=100 +(25*cptlvl);
+
      cptboss=0;
+     image(life,xb,yb,60,60);
+     yb=yb+1;
+     if(dist(xb,yb,x,y)<55){
+       vie=vie+1;
+        yb=100;
+            cptlvl=cptlvl+1;
+       bosslife=100 +(25*cptlvl);
+      }
+      if(yb>600){
+         yb=100;
+            cptlvl=cptlvl+1;
+       bosslife=100 +(25*cptlvl);
+      }
    }
- 
 }
-void coconut(){
-  if(key=='w'){
-    if(keyPressed == true){
-     
-      cococpt=2;
-    }
-  }
-   
-    if(key=='x'){
-    if(keyPressed == true){
-     cococpt= -2;
-    }
-    }
-   
+
   
-}
-
-
 void jeu(){
-   if(cococpt>= 1){
+  
+    if (key == 's' || key== 'S'){
+      if(keyPressed==true){
+    menu=0;
+    score=0;
+    select=0;
+    worldselect=0;
+    tabx[i]=random(350);
+   taby[i]=random(-50000,-50);
+   
+      }
+    }
+    
+  level();
+   if(world == 2){
     background(island);
     
       fill(255,255,255);
   line(25,500,320,500);
-  image(cat,x-25,y-25,50,50);
-      bag.close();
-     geo.close();
-     coco.play();
-    }
- if(cococpt<=-1){
+  image(palmcat,x-25,y-25,60,60);
+ 
+  
+      
+     }
+ if(world==1){
     background(background);
+   fill(255,255,255);
+  line(25,500,320,500);
+  image(cat,x-25,y-25,60,60);
+  
+    }
+    
+    if(world==3){
+      background(city);
     
       fill(255,255,255);
   line(25,500,320,500);
-  image(cat,x-25,y-25,50,50);
+  image(thugcat,x-25,y-25,60,60);
  
     }
  
   
 
  
-   coconut();
-  level();
   if (cptlvl % 2 == 0) {
     cptboss=1;
    boss();
@@ -213,7 +300,7 @@ for( int i=0; i < tabx.length ; i=i+1){
    if(score>=15 && score<=29){ //LEVEL 1.2
    if ( taby[i]>=-30 && taby[i]<=550){
      
-    image(taco,tabx[i]-15,taby[i]-15,30,30);
+    image(taco,tabx[i]-15,taby[i]-15,50,50);
   }
    o=2;
     t=1.5;
@@ -229,14 +316,23 @@ for( int i=0; i < tabx.length ; i=i+1){
     
  }
  
- if(score>=60 && score<=90){
+ if(score>=60 && score<=89){
     if ( taby[i]>=-30 && taby[i]<=550){
 
-   image(taco,tabx[i]-10,taby[i]-10,20,20);
+   image(taco,tabx[i]-10,taby[i]-10,50,50);
     }
    t=2;
    o=3;
  }
+ if(score>=90 && score<=119){
+    if ( taby[i]>=-30 && taby[i]<=550){
+
+   ellipse(tabx[i],taby[i],30,30);
+    }
+   t=2;
+   o=3;
+ }
+ 
    
    if(dist(x,y,tabx[i],taby[i])<45){
      taby[i]=600;
@@ -256,10 +352,7 @@ if(cptv>=5){
   vie=vie+1;
   cptv=0;
 }
-   if(score>=30){
-     bag.close();
-     geo.play();
-   }
+   
  
      for( int i=0; i < tabxb.length ; i=i+1){
        option();
@@ -278,24 +371,32 @@ if(cptv>=5){
    
    if(score>=15 && score<=29){
      if ( tabyb[i]>=-30 && tabyb[i]<=550){
-       image(bombe,tabxb[i]-15,tabyb[i]-15,30,30);
+       image(bombe,tabxb[i]-15,tabyb[i]-15,50,50);
      }
      p=2;
  }
  if(score>=30 && score<=59){
     if ( tabyb[i]>=-30 && tabyb[i]<=550){
-      image(bombe,tabxb[i]-10,tabyb[i]-10,20,20);
+      image(bombe,tabxb[i]-10,tabyb[i]-10,50,50);
     }
    t=1.5;
-   p=3;
+   p=2.5;
    
  
  }
- if(score>=60 && score<=90){
+ if(score>=60 && score<=89){
    if ( tabyb[i]>=-30 && tabyb[i]<=550){
-     image(bombe,tabxb[i]-5,tabyb[i]-5,10,10);
+     image(bombe,tabxb[i]-5,tabyb[i]-5,50,50);
    }
-   p=4;
+   p=3;
+    
+  
+ }
+ if(score>=90 && score<=119){
+   if ( tabyb[i]>=-30 && tabyb[i]<=550){
+     image(bombe,tabxb[i]-5,tabyb[i]-5,50,50);
+   }
+   p=3.5;
     
   
  }
@@ -338,7 +439,7 @@ if(cptv>=5){
  
 missile();
  
-if (key=='c'){  // fonction triche
+if (key=='c' || key=='C'){  // fonction triche
  if( keyPressed== true){
    sc=1;
  }
@@ -372,73 +473,33 @@ if(sc==1){
 }
 
 void ligne(){
-   
-    fill(255,255,200);
-    image(asteroide,0,yl,30,30);
-    image(asteroide,31,yl,30,30);
-    image(asteroide,62,yl,30,30);
-    image(asteroide,93,yl,30,30);
-    image(asteroide,124,yl,30,30);
-    image(asteroide,224,yl,30,30);
-    image(asteroide,255,yl,30,30);
-    image(asteroide,286,yl,30,30);
-    image(asteroide,317,yl,30,30);
-
-
-if (dist(x,y,15,yl)<30){
-  
-  yl=600;
-    vie=vie-1;
-}
-if (dist(x,y,46,yl)<30){
-  
-  yl=600;
-    vie=vie-1;
-}
-if (dist(x,y,77,yl)<30){
- 
-  yl=600;
-    vie=vie-1;
-}
-if (dist(x,y,108,yl)<30){
-  
-  yl=600;
-   vie=vie-1;
-}
-if (dist(x,y,139,yl)<30){
-  
-  yl=600;
-    vie=vie-1;
-}
-if (dist(x,y,239,yl)<30){
-  
-  yl=600;
-    vie=vie-1;
-}
-if (dist(x,y,270,yl)<30){
- 
-  yl=600;
-    vie=vie-1;
-}
-if (dist(x,y,301,yl)<30){
-  
-  yl=600;
-   vie=vie-1;
-}
-if (dist(x,y,332,yl)<30){
-  
-  yl=600;
-   vie=vie-1;
-   
-   
-  
-}
-yl=yl+p;
+  if(score%10 ==0){ // réinitiatisation de la lgne tous les 10 points
+    abs=0;
+    yl=-40;
+   for(i=0;i<11;i++){
+     tabxa[i]=abs;
+    abs=abs+31;
+   }
   }
-
+  for(i=0;i<11;i++){
+if(yl>-40 && yl<600){
+  image(asteroide,tabxa[i],yl,30,30);
+}
+if (dist(tabxa[i]+10,yl,x,y)<30){ //detection chat astéroides
+  
+  yl=600;
+    vie=vie-1;
+}
+if (dist(tabxa[i]+10,yl,xm,ym)<30){ //detection missiles astéroides
+  tabxa[i]=600;
+}
+   }
+yl=yl+p;
+  
+}
 void missile(){
   
-     if (ym>0 && ym<500){
+     if (ym>0 && ym<500){   //dessin du missile
        fill(#FFBC03);
        ellipse(xm+25,ym+50,random(5,10),20);
        ellipse(xm+25,ym+30,random(10,15),20);
@@ -452,7 +513,7 @@ void missile(){
     
   }
 
-void Deplacement(){
+void Deplacement(){    //deplacement du chat
   if (keyCode == LEFT) {
     if ( keyPressed==true) {
       
@@ -502,7 +563,7 @@ if(vie>=5){
 }
 
 void setup (){
-  cococpt = -1;
+  world = -1;
    xb=random(100,250);
    bosslife=100;
   yb=100;
@@ -526,7 +587,10 @@ void setup (){
   asteroide =loadImage("asteroide.png");
   island = loadImage("beach.png");
   option = loadImage("option.jpg");
-  monde = loadImage("monde.png");
+  mondeselect = loadImage("monde.png");
+  city = loadImage("city.jpg");
+  thugcat= loadImage("thugcat.png");
+  palmcat= loadImage("palmcat.png");
   
  minim= new Minim(this);
  bag = minim.loadFile("Bag Raiders - Shooting Stars.mp3");
@@ -535,12 +599,17 @@ void setup (){
   geo= minim.loadFile("GeometryDash-Level1.mp3");
   exploboss = minim.loadSample("chat.mp3");
   coco = minim.loadFile("cocoSong.mp3");
+  snoop = minim.loadFile("snoop.mp3");
   fill(255,255,255);
   line(25,500,320,25);
-
+  
  for( int i=0; i < tabx.length ; i=i+1){
  tabx[i]=random(350);
  }
+ for(int i=0;i<11;i=i+1){
+     tabxa[i]=abs;
+    abs=abs+31;
+   }
  for( int i=0; i < taby.length ; i=i+1){
  taby[i]=random(-50000,0);
  }
@@ -564,22 +633,7 @@ void draw(){
   
   frameRate(300);
   
-   if (key == '1') {
-   if(keyPressed ==true){
-     menu=1;
-   }
- }
- if (key == '2') {
-   if(keyPressed ==true){
-     menu=1;
-     cococpt=2;
-   }
- }
- if (key == '3') {
-   if(keyPressed ==true){
-     menu=1;
-   }
- }
+   
  menu();
  if (menu>=1){
    jeu();
