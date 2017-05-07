@@ -1,3 +1,10 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 
 import ddf.minim.*;
 
@@ -12,6 +19,9 @@ AudioPlayer snoop;
 AudioSample squish;
 AudioSample explo1;
 AudioSample exploboss;
+
+float bonusx,bonusy,bonus,cptbonus; //coordonnées de la caisse bonus, valeur de l'état(activation ou non du bonus);
+int taille,taille2,taille3;
 float abs=0; //abscisses des astéroides
 int select=0;
 int xv; //abscisse du coeur bonus après le boss
@@ -26,7 +36,7 @@ int menu=0;
 float ly=0; //ordonée du texte level
 int sc=0;
 int cptv; //le nombre de tacos d'affilé
-float xm; // abscisse du missile
+float xm,xm2,xm3; // abscisse des missile
 int vie; //nombre de vies
 float t=1; //vitesse des objet qui tombent
 float x=70;//abcsisse du chat
@@ -56,15 +66,18 @@ float [] tabxa= new float[11] ;
 float []tabxb= new float[100];
 float [] tabyb= new float[100] ;
 
-PImage thugcat, palmcat, city, island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,mondeselect; // déclaration des images
+PImage bonusbox, image1, image2, image3,mondes, menu2, banana, frites, donut, cocop, pineaple, burger, soda, thugcat, palmcat, city, island, background,cat,bombe,life,taco,asteroide,trump,gameover,missile,pizza,menui,boss, option,mondeselect; // déclaration des images
 
 void monde(){
   if(menu==0){
+    
   if (key == ENTER){
   select=1;
+  
  }  
   if(select==1){
-    image(mondeselect,0,0,350,550);
+    image(menu2,0,0,350,550);
+    image(mondes,0,0,350,550);
         taby[i]=taby[i]-t;
         tabyb[i]=tabyb[i]-t;
   
@@ -74,13 +87,19 @@ void monde(){
     
   if(key=='1'){
     worldselect=1;
+    background(background);
+    image(mondes,0,0,350,550);
     
   }
   if(key =='2'){
     worldselect=2;
+    background(island);
+    image(mondes,0,0,350,550);
   }
   if(key=='3'){
     worldselect=3;
+    background(city);
+    image(mondes,0,0,350,550);
   }
  if(worldselect==1){
    
@@ -91,8 +110,10 @@ void monde(){
      menu=1;
      world=1;
      bag.play();
-      coco.close(); 
+    
   snoop.close();
+  coco.close();
+      
    }
     }
  }
@@ -105,8 +126,10 @@ void monde(){
      menu=1;
      world=2;
      coco.play();
-      bag.close(); 
+     bag.close(); 
   snoop.close();
+;
+     
    }
    else{
      select=2;
@@ -124,8 +147,10 @@ void monde(){
      menu=1;
      world=3;
      snoop.play();
-      coco.close(); 
-  bag.close();
+     bag.close(); 
+
+  coco.close();
+      
    }
     }
  }
@@ -135,18 +160,64 @@ void monde(){
   }
   }
 }
+void bonusmissil(){
+  if(ym==449 ){
+    cptbonus=cptbonus-1;
+  }
+  if (bonus==0 && score%10==0){
+    bonusy=-60;
+    bonusx= random(50,200);
+    }
+    bonusy=bonusy+t;
+     
+      
+ 
+   image(bonusbox,bonusx,bonusy,60,60);
+  
+   
+  if (cptbonus<=0){
+    cptbonus=0;
+  }
+  if(dist(bonusx,bonusy,x,y)<45){
+    bonus=3;
+    cptbonus=3;
+    bonusy=600;
+  }
+  
 
+if(cptbonus==1){
+    image(missile,15,15,60,60);
+}
+if(cptbonus==2){
+    image(missile,15,15,60,60);
+    image(missile,35,15,60,60);
+}
+if(cptbonus==3){
+    image(missile,15,15,60,60);
+    image(missile,35,15,60,60);
+     image(missile,55,15,60,60);
+    }
+     if(bonus<=0){
+       bonus=0;
+     }
+  
+}
+
+    
 
 
 
 void option(){
    if (key == 'o' || key=='O'){
+     if(keyPressed==true){
      
         image(option,0,0,350,550);
         taby[i]=taby[i]-t;
         tabyb[i]=tabyb[i]-t;
-      
+     }
     }
+
+
 }
 void menu(){
   if(menu==0){
@@ -154,32 +225,14 @@ void menu(){
     image(menui,0,0,width,height);
     
    
-    option();
-   monde();
    
+   monde();
+    option();
  
  // image(trump,100,300,150,150);
    }
 }
-void level(){
- 
- if ((score % 20)==0 && score>0){
-    t=1.5;
-   String l3="LEVEL "+ cptlvl;
-    fill(255,255,255);
-   textSize(60);
-   text(l3,70,ly);
-   ly=ly+1.5;
-   // vitesse de descente du level
-   if(ly>=500){
-     ly=0;
-     score=score+1;
-     cptlvl=cptlvl+1;
-     
- 
- }
- }
-}
+
 void boss(){
  
  if(bosslife>0){
@@ -194,11 +247,33 @@ void boss(){
  image(boss,xb,yb,100,100);
  fill(0,255,255);
  rect(xb-50,yb-70,bosslife,yb-90);
- if(dist(xm,ym,xb,yb+20)<100){
+ 
+ if(dist(xm,ym,xb,yb+20)<100 ){
    bosslife=bosslife-25;
-   ym=0;
    exploboss.trigger();
-    
+   xm=1000;
+   if(xm2>400 && xm3>400){
+   bonus=bonus-1;
+   ym=500;
+   }
+   }
+   if(dist(xm2,ym,xb,yb+20)<100 ){
+   bosslife=bosslife-25;
+   exploboss.trigger();
+   xm2=1000;
+   if(xm>400 && xm3>400){
+   bonus=bonus-1;
+   ym=500;
+   }
+   }
+   if(dist(xm3,ym,xb,yb+20)<100 ){
+   bosslife=bosslife-25;
+   exploboss.trigger();
+   xm3=1000;
+   if(xm2>400 && xm>400){
+   bonus=bonus-1;
+   ym=500;
+   }
    }
  }
    else{
@@ -231,12 +306,22 @@ void jeu(){
     worldselect=0;
     tabx[i]=random(350);
    taby[i]=random(-50000,-50);
+   vie=5;
+    bag.close(); 
+  snoop.close();
+  coco.close();
    
       }
     }
     
-  level();
+  
    if(world == 2){
+     image1=cocop;
+     image2=banana;
+     image3=pineaple;
+     taille=60;
+     taille2=100;
+     taille3=100;
     background(island);
     
       fill(255,255,255);
@@ -247,6 +332,12 @@ void jeu(){
       
      }
  if(world==1){
+      image1=taco;
+     image2=pizza;
+     image3=donut;
+      taille=50;
+     taille2=90;
+     taille3=90;
     background(background);
    fill(255,255,255);
   line(25,500,320,500);
@@ -255,6 +346,12 @@ void jeu(){
     }
     
     if(world==3){
+       taille=50;
+     taille2=60;
+     taille3=50;
+     image1=burger;
+     image2=frites;
+     image3=soda;
       background(city);
     
       fill(255,255,255);
@@ -292,7 +389,7 @@ for( int i=0; i < tabx.length ; i=i+1){
    if(score>=0 && score<=14){
      if ( taby[i]>=-30 && taby[i]<=550){
      o=2;
-   image(taco,tabx[i]-25,taby[i]-25,50,50);
+   image(image1,tabx[i]-25,taby[i]-25,taille,taille);
    }
    t=1.5;
    }
@@ -300,7 +397,7 @@ for( int i=0; i < tabx.length ; i=i+1){
    if(score>=15 && score<=29){ //LEVEL 1.2
    if ( taby[i]>=-30 && taby[i]<=550){
      
-    image(taco,tabx[i]-15,taby[i]-15,50,50);
+    image(image2,tabx[i]-15,taby[i]-15,taille2,taille2);
   }
    o=2;
     t=1.5;
@@ -309,7 +406,7 @@ for( int i=0; i < tabx.length ; i=i+1){
  
  if(score>=30 && score<=59){
     if ( taby[i]>=-30 && taby[i]<=550){
-  image(pizza,tabx[i]-50,taby[i]-10,100,100);
+  image(image3,tabx[i]-50,taby[i]-10,taille3,taille3);
     }
    t=1.5;
     o=2;
@@ -319,7 +416,7 @@ for( int i=0; i < tabx.length ; i=i+1){
  if(score>=60 && score<=89){
     if ( taby[i]>=-30 && taby[i]<=550){
 
-   image(taco,tabx[i]-10,taby[i]-10,50,50);
+   image(image1,tabx[i]-10,taby[i]-10,taille,taille);
     }
    t=2;
    o=3;
@@ -327,7 +424,15 @@ for( int i=0; i < tabx.length ; i=i+1){
  if(score>=90 && score<=119){
     if ( taby[i]>=-30 && taby[i]<=550){
 
-   ellipse(tabx[i],taby[i],30,30);
+   image(image2,tabx[i],taby[i],taille2,taille2);
+    }
+   t=2;
+   o=3;
+ }
+ if(score>=120 && score<=150){
+    if ( taby[i]>=-30 && taby[i]<=550){
+
+   image(image3,tabx[i],taby[i],taille3,taille3);
     }
    t=2;
    o=3;
@@ -407,14 +512,33 @@ if(cptv>=5){
      vie=vie-1;
      
    }
-   if(dist(x,ym,tabxb[i],tabyb[i])<25){
+   if(dist(xm+15,ym,tabxb[i],tabyb[i])<25){
+     
+     if (bonus>0){
+       bonus=bonus-1;
+     }
+     explo1.trigger();
+     cptv=cptv+1;
+     tabyb[i]=600;
+     xm=1020;
+     }
+    if(dist(xm2+15,ym,tabxb[i],tabyb[i])<25){
+       if (bonus>0){
+       bonus=bonus-1;
+        xm2=1020;
+     }
      tabyb[i]=600;
      explo1.trigger();
      cptv=cptv+1;
-     ym=500;
-     
-     
-     
+     xm2=1000;  
+   
+   }
+    if(dist(xm3+15,ym,tabxb[i],tabyb[i])<25){
+     tabyb[i]=600;
+     explo1.trigger();
+     cptv=cptv+1;  
+      bonus=bonus-1;
+      xm3=1000;
    }
    
    tabyb[i]=tabyb[i]+t;
@@ -430,14 +554,25 @@ if(cptv>=5){
    n=0;
  }
  
- if (key == ' ') {
+ if (key == ' ' && ym==500) {
    if(keyPressed ==true){
       xm=x-25;
+       if(bonus>0 ){
+     xm2=xm+25;
+      xm3=xm-25;
+     }
+     if(bonus==0){
+       xm2=1200;
+      xm3=1000;
+     }
+      
      ym=ym-1;
    }
  }
- 
-missile();
+ missile();
+  bonusmissil();
+    
+
  
 if (key=='c' || key=='C'){  // fonction triche
  if( keyPressed== true){
@@ -451,6 +586,8 @@ if(sc==1){
   
   
    vie();
+   
+   
  
  
      
@@ -490,16 +627,27 @@ if (dist(tabxa[i]+10,yl,x,y)<30){ //detection chat astéroides
   yl=600;
     vie=vie-1;
 }
-if (dist(tabxa[i]+10,yl,xm,ym)<30){ //detection missiles astéroides
+if (dist(tabxa[i]+10,yl,x,ym)<30){ //detection missiles astéroides
   tabxa[i]=600;
+   
+}
+if (dist(tabxa[i]+10,yl,x+5,ym)<30){ //detection missiles astéroides
+  tabxa[i]=600;
+   
+}
+if (dist(tabxa[i]+10,yl,x-50,ym)<30){ //detection missiles astéroides
+  tabxa[i]=600;
+ 
 }
    }
 yl=yl+p;
   
 }
 void missile(){
-  
-     if (ym>0 && ym<500){   //dessin du missile
+    if(ym<-30){
+      bonus=bonus-1;
+    }
+     if (ym>-10 && ym<500){   //dessin du missile
        fill(#FFBC03);
        ellipse(xm+25,ym+50,random(5,10),20);
        ellipse(xm+25,ym+30,random(10,15),20);
@@ -510,6 +658,34 @@ void missile(){
     else{
      ym=500;
     }
+    if(bonus>0){
+    if (ym>-10 && ym<500){   //dessin du missile
+       fill(#FFBC03);
+       ellipse(xm2+25,ym+50,random(5,10),20);
+       ellipse(xm2+25,ym+30,random(10,15),20);
+       ellipse(xm2+25,ym+10,random(15,20),20);
+     image(missile,xm2,ym-60,50,50);
+      
+  }
+    else{
+     ym=500;
+    }
+    
+    
+    if (ym>-10 && ym<500){   //dessin du missile
+       fill(#FFBC03);
+       ellipse(xm3+25,ym+50,random(5,10),20);
+       ellipse(xm3+25,ym+30,random(10,15),20);
+       ellipse(xm3+25,ym+10,random(15,20),20);
+     image(missile,xm3,ym-60,50,50);
+      
+  }
+    else{
+     ym=500;
+     }
+    }
+   
+      
     
   }
 
@@ -563,6 +739,10 @@ if(vie>=5){
 }
 
 void setup (){
+  bonus=0;
+  cptbonus=0;
+  bonusx=175;
+  bonusy=-60;
   world = -1;
    xb=random(100,250);
    bosslife=100;
@@ -579,19 +759,27 @@ void setup (){
  gameover=loadImage("game over.png");
   bombe = loadImage("bombe.png");
   taco = loadImage("taco.png");
-  trump = loadImage("trump.png");
+ donut= loadImage("donut.png");
+ cocop= loadImage("cocop.png");
+ pineaple= loadImage("pineapleP.png");
+ burger= loadImage("burgerP.png");
+ frites= loadImage("fritesP.png");
+ soda= loadImage("sodaP.png");
   missile = loadImage("missile.png");
   pizza = loadImage("pizza.png");
   menui = loadImage("menu.jpg");
+  menu2 = loadImage("menu.png");
   boss = loadImage ("boss.png");
   asteroide =loadImage("asteroide.png");
   island = loadImage("beach.png");
   option = loadImage("option.jpg");
   mondeselect = loadImage("monde.png");
   city = loadImage("city.jpg");
+  bonusbox= loadImage("bonus.png");
   thugcat= loadImage("thugcat.png");
   palmcat= loadImage("palmcat.png");
-  
+  banana= loadImage("bananeP.png");
+  mondes= loadImage("mondes.png");
  minim= new Minim(this);
  bag = minim.loadFile("Bag Raiders - Shooting Stars.mp3");
   squish = minim.loadSample("squish.wav");
